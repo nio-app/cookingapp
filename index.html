@@ -359,6 +359,148 @@
       );
     }
 
+
+    // ── Nutrition Tab ─────────────────────────────────────────
+    function NutritionTab({ recipe, portions }) {
+      const [nutrition, setNutrition] = useState(recipe.nutrition || null);
+      const [loading, setLoading] = useState(false);
+      const [error, setError] = useState("");
+      const ratio = portions / recipe.portions;
+
+      const calculate = async () => {
+        setLoading(true); setError("");
+        const ingredientList = recipe.ingredients
+          .map(i => `${i.amount} ${i.unit} ${i.name}`.trim())
+          .join("\n");
+
+        const prompt = `Bereken de voedingswaarden voor dit recept met ${recipe.portions} porties.
+Ingredienten:
+${ingredientList}
+
+Geef ALLEEN een JSON object terug, geen uitleg, geen markdown:
+{"calories":0,"protein":0,"carbs":0,"fat":0,"fiber":0,"sugar":0}
+Alle waarden zijn per portie in grammen (calories in kcal). Rond af op hele getallen.`;
+
+        try {
+          const res = await fetch("https://api.anthropic.com/v1/messages", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "x-api-key": document.getElementById("nutrition-api-key")?.value || "",
+              "anthropic-version": "2023-06-01",
+              "anthropic-dangerous-direct-browser-access": "true",
+            },
+            body: JSON.stringify({
+              model: "claude-haiku-4-5-20251001",
+              max_tokens: 200,
+              messages: [{ role: "user", content: prompt }],
+            }),
+          });
+          if (!res.ok) {
+            const e = await res.json().catch(()=>({}));
+            throw new Error(e?.error?.message || "API fout "+res.status);
+          }
+          const data = await res.json();
+          const text = data.content?.find(b=>b.type==="text")?.text || "";
+          const start = text.indexOf("{"); const end = text.lastIndexOf("}");
+          if (start===-1) throw new Error("Geen geldig antwoord");
+          const parsed = JSON.parse(text.slice(start, end+1));
+          setNutrition(parsed);
+          // Save to Supabase
+          await supabase.from("recepten").update({ nutrition: parsed }).eq("id", recipe.id);
+          recipe.nutrition = parsed;
+        } catch(e) {
+          setError(e.message);
+        }
+        setLoading(false);
+      };
+
+      const NutrRow = ({icon, label, value, unit, color}) => (
+        <div style={{display:"flex",alignItems:"center",gap:10,padding:"10px 0",borderBottom:"1px solid #f5f5f5"}}>
+          <div style={{width:36,height:36,borderRadius:10,background:color+"22",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,flexShrink:0}}>{icon}</div>
+          <span style={{flex:1,fontSize:14,color:"#333",fontWeight:500}}>{label}</span>
+          <span style={{fontSize:15,fontWeight:700,color:color}}>{Math.round((value||0)*ratio)}</span>
+          <span style={{fontSize:12,color:"#aaa",minWidth:20}}>{unit}</span>
+        </div>
+      );
+
+      if (!nutrition && !loading) return (
+        <div style={{padding:"24px 0",display:"flex",flexDirection:"column",alignItems:"center",gap:16}}>
+          <div style={{fontSize:48}}>🥗</div>
+          <div style={{textAlign:"center"}}>
+            <p style={{fontWeight:700,fontSize:15,color:C.text,margin:"0 0 6px"}}>Voedingswaarden berekenen</p>
+            <p style={{fontSize:13,color:C.textLight,margin:"0 0 16px",lineHeight:1.5}}>Claude berekent calorieën, eiwitten,<br/>koolhydraten en vetten per portie.</p>
+          </div>
+          <div style={{width:"100%",marginBottom:8}}>
+            <label style={{fontSize:12,fontWeight:600,color:C.textMid,display:"block",marginBottom:6}}>🔑 Anthropic API-sleutel</label>
+            <input id="nutrition-api-key" type="password" placeholder="sk-ant-api03-..." style={{width:"100%",padding:"10px 12px",border:`1px solid ${C.borderMid}`,borderRadius:8,fontSize:13,fontFamily:"monospace",outline:"none",background:"#fafafa",boxSizing:"border-box"}}/>
+            <p style={{fontSize:11,color:C.textLight,margin:"4px 0 0"}}>Haal op via console.anthropic.com/settings/keys</p>
+          </div>
+          <button onClick={calculate} style={{padding:"12px 28px",background:C.accent,color:"#fff",border:"none",borderRadius:10,fontWeight:700,fontSize:14,cursor:"pointer",fontFamily:"inherit",boxShadow:`0 4px 14px ${C.accent}44`}}>
+            ✨ Berekenen
+          </button>
+        </div>
+      );
+
+      if (loading) return (
+        <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"60px 0",gap:16}}>
+          <Spinner size={32}/>
+          <p style={{fontSize:14,color:C.textLight}}>Claude berekent voedingswaarden...</p>
+        </div>
+      );
+
+      if (error) return (
+        <div style={{padding:"24px 0",display:"flex",flexDirection:"column",alignItems:"center",gap:12}}>
+          <div style={{fontSize:40}}>⚠️</div>
+          <p style={{fontSize:14,color:C.danger,textAlign:"center"}}>{error}</p>
+          <div style={{width:"100%",marginBottom:8}}>
+            <input id="nutrition-api-key" type="password" placeholder="sk-ant-api03-..." style={{width:"100%",padding:"10px 12px",border:`1px solid ${C.borderMid}`,borderRadius:8,fontSize:13,fontFamily:"monospace",outline:"none",background:"#fafafa",boxSizing:"border-box"}}/>
+          </div>
+          <button onClick={calculate} style={{padding:"10px 24px",background:C.accent,color:"#fff",border:"none",borderRadius:8,fontWeight:700,fontSize:13,cursor:"pointer",fontFamily:"inherit"}}>Opnieuw proberen</button>
+        </div>
+      );
+
+      return (
+        <div>
+          {/* Calorie ring */}
+          <div style={{display:"flex",alignItems:"center",gap:16,padding:"16px 0 20px",borderBottom:`1px solid ${C.border}`,marginBottom:4}}>
+            <div style={{position:"relative",width:80,height:80,flexShrink:0}}>
+              <svg width={80} height={80} style={{transform:"rotate(-90deg)"}}>
+                <circle cx={40} cy={40} r={32} fill="none" stroke="#f0f0f0" strokeWidth={8}/>
+                <circle cx={40} cy={40} r={32} fill="none" stroke={C.accent} strokeWidth={8}
+                  strokeDasharray={`${2*Math.PI*32}`}
+                  strokeDashoffset={`${2*Math.PI*32*0.25}`}
+                  strokeLinecap="round"/>
+              </svg>
+              <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
+                <span style={{fontSize:16,fontWeight:800,color:C.text,lineHeight:1}}>{Math.round((nutrition.calories||0)*ratio)}</span>
+                <span style={{fontSize:9,color:C.textLight,fontWeight:600}}>kcal</span>
+              </div>
+            </div>
+            <div style={{flex:1}}>
+              <p style={{fontWeight:700,fontSize:15,color:C.text,margin:"0 0 2px"}}>Per portie ({portions}x)</p>
+              <p style={{fontSize:12,color:C.textLight,margin:"0 0 8px"}}>Gebaseerd op {recipe.portions} porties recept</p>
+              <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+                {[["Eiw.",nutrition.protein,"#4CAF50"],["Koolh.",nutrition.carbs,C.accent],["Vet",nutrition.fat,"#FF9800"]].map(([l,v,col])=>(
+                  <div key={l} style={{background:col+"18",borderRadius:6,padding:"3px 8px",fontSize:11,fontWeight:700,color:col}}>{l} {Math.round((v||0)*ratio)}g</div>
+                ))}
+              </div>
+            </div>
+          </div>
+          <NutrRow icon="🔥" label="Calorieën" value={nutrition.calories} unit="kcal" color="#FF5722"/>
+          <NutrRow icon="💪" label="Eiwitten" value={nutrition.protein} unit="g" color="#4CAF50"/>
+          <NutrRow icon="🌾" label="Koolhydraten" value={nutrition.carbs} unit="g" color={C.accent}/>
+          <NutrRow icon="🫒" label="Vetten" value={nutrition.fat} unit="g" color="#FF9800"/>
+          <NutrRow icon="🌿" label="Vezels" value={nutrition.fiber} unit="g" color="#8BC34A"/>
+          <NutrRow icon="🍬" label="Suikers" value={nutrition.sugar} unit="g" color="#E91E63"/>
+          <button onClick={()=>{setNutrition(null); recipe.nutrition=null;}} style={{marginTop:16,width:"100%",padding:"10px",background:"transparent",border:`1px solid ${C.borderMid}`,borderRadius:8,color:C.textLight,fontSize:12,cursor:"pointer",fontFamily:"inherit"}}>
+            ↺ Opnieuw berekenen
+          </button>
+          <div style={{height:20}}/>
+        </div>
+      );
+    }
+
     // ── Recipe Detail ─────────────────────────────────────────
     function RecipeDetail({ recipe, onBack, onDelete, onEdit, onRate, saving }) {
       const [portions, setPortions] = useState(recipe.portions);
@@ -423,7 +565,7 @@
             </div>
           </div>
           <div style={{display:"flex",borderBottom:`1px solid ${C.border}`,flexShrink:0}}>
-            {[["ing","Ingredienten"],["steps","Stappen"]].map(([id,label])=>(
+            {[["ing","Ingredienten"],["steps","Stappen"],["voeding","Voeding"]].map(([id,label])=>(
               <button key={id} onClick={()=>setTab(id)} style={{flex:1,padding:"10px 0",background:"none",border:"none",borderBottom:`2px solid ${tab===id?C.accent:"transparent"}`,fontWeight:tab===id?700:500,fontSize:13,color:tab===id?C.accent:"#888",cursor:"pointer",fontFamily:"inherit"}}>{label}</button>
             ))}
           </div>
@@ -438,7 +580,7 @@
                   <span style={{fontSize:13,fontWeight:700,color:C.accent}}>{fmt(ing.amount*ratio)}{ing.unit?" "+ing.unit:""}</span>
                 </div>
               ))
-            ) : (
+            ) : tab==="steps" ? (
               recipe.steps.map((step,i)=>(
                 <div key={step.id} style={{marginBottom:16,paddingBottom:16,borderBottom:"1px solid #f5f5f5"}}>
                   <div style={{display:"flex",gap:10,alignItems:"flex-start"}}>
@@ -448,6 +590,8 @@
                   {step.timer&&<StepTimer seconds={step.timer}/>}
                 </div>
               ))
+            ) : (
+              <NutritionTab recipe={recipe} portions={portions}/>
             )}
             <div style={{height:20}}/>
           </div>
@@ -571,6 +715,7 @@
           time: recipe.time, rating: recipe.rating, portions: recipe.portions,
           source: recipe.source, url: recipe.url,
           ingredients: recipe.ingredients, steps: recipe.steps,
+          nutrition: recipe.nutrition || null,
           is_favorite: false,
         }]).select().single();
         if (error) { showToast("Opslaan mislukt: "+error.message, "error"); }
