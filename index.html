@@ -249,8 +249,8 @@
       const lbl = {fontSize:12,fontWeight:600,color:C.textMid,display:"block",marginBottom:4};
 
       return (
-        <div style={{position:"fixed",inset:0,zIndex:100,display:"flex",flexDirection:"column",background:"#fff"}}>
-          <div style={{padding:"max(16px, env(safe-area-inset-top, 16px)) 16px 0",borderBottom:`1px solid ${C.border}`}}>
+        <div style={{position:"fixed",inset:0,zIndex:100,display:"flex",flexDirection:"column",background:"#fff",overflow:"hidden"}}>
+          <div style={{padding:"max(16px, env(safe-area-inset-top, 16px)) 16px 0",borderBottom:`1px solid ${C.border}`,flexShrink:0}}>
             <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}>
               <button onClick={onClose} style={{background:"none",border:"none",fontSize:22,cursor:"pointer",color:"#888",padding:4}}>✕</button>
               <span style={{fontWeight:700,fontSize:16,color:C.text}}>{title}</span>
@@ -259,13 +259,13 @@
                 {isEdit?"Opslaan":"Toevoegen"}
               </button>
             </div>
-            <div style={{display:"flex"}}>
+            <div style={{display:"flex",flexShrink:0}}>
               {["Basis","Ingredienten","Stappen"].map((t,i)=>(
                 <button key={t} onClick={()=>setPage(i)} style={{flex:1,background:"none",border:"none",borderBottom:`2px solid ${page===i?C.accent:"transparent"}`,padding:"8px 0",fontWeight:page===i?700:500,fontSize:13,color:page===i?C.accent:"#888",cursor:"pointer",fontFamily:"inherit"}}>{t}</button>
               ))}
             </div>
           </div>
-          <div style={{flex:1,overflowY:"auto",padding:16}}>
+          <div style={{flex:1,overflowY:"auto",overflowX:"hidden",padding:16,WebkitOverflowScrolling:"touch"}}>
             {page===0 && (
               <div style={{display:"flex",flexDirection:"column",gap:14}}>
                 {!isEdit && <JSONImportSection onImported={prefill} />}
@@ -377,8 +377,8 @@
       };
 
       return (
-        <div style={{height:"100%",display:"flex",flexDirection:"column",background:"#fff"}}>
-          <div style={{padding:"max(16px, env(safe-area-inset-top, 16px)) 16px 0",borderBottom:`1px solid ${C.border}`}}>
+        <div style={{height:"100%",display:"flex",flexDirection:"column",background:"#fff",overflow:"hidden"}}>
+          <div style={{padding:"max(16px, env(safe-area-inset-top, 16px)) 16px 0",borderBottom:`1px solid ${C.border}`,flexShrink:0}}>
             <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}>
               <button onClick={onBack} style={{background:"none",border:"none",color:C.accent,fontWeight:700,fontSize:14,cursor:"pointer",padding:0,fontFamily:"inherit"}}>&#8249; Terug</button>
               <div style={{display:"flex",gap:8}}>
@@ -387,7 +387,7 @@
               </div>
             </div>
           </div>
-          <div style={{padding:"12px 16px 16px",borderBottom:`1px solid ${C.border}`}}>
+          <div style={{padding:"12px 16px 16px",borderBottom:`1px solid ${C.border}`,flexShrink:0}}>
             <div style={{fontSize:44,marginBottom:8}}>{recipe.emoji}</div>
             <h2 style={{fontWeight:700,fontSize:20,color:C.text,margin:"0 0 6px"}}>{recipe.name}</h2>
             <div style={{display:"flex",gap:10,alignItems:"center",flexWrap:"wrap",marginBottom:8}}>
@@ -414,7 +414,7 @@
               </div>
             )}
           </div>
-          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"11px 16px",borderBottom:`1px solid ${C.border}`}}>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"11px 16px",borderBottom:`1px solid ${C.border}`,flexShrink:0}}>
             <span style={{fontWeight:600,fontSize:14,color:"#333"}}>Porties</span>
             <div style={{display:"flex",alignItems:"center",gap:12}}>
               <button onClick={()=>setPortions(p=>Math.max(1,p-1))} style={{width:30,height:30,borderRadius:8,background:"#f5f5f5",border:`1px solid ${C.borderMid}`,color:"#333",fontSize:18,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}>−</button>
@@ -422,12 +422,12 @@
               <button onClick={()=>setPortions(p=>p+1)} style={{width:30,height:30,borderRadius:8,background:C.accent,border:"none",color:"#fff",fontSize:18,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}>+</button>
             </div>
           </div>
-          <div style={{display:"flex",borderBottom:`1px solid ${C.border}`}}>
+          <div style={{display:"flex",borderBottom:`1px solid ${C.border}`,flexShrink:0}}>
             {[["ing","Ingredienten"],["steps","Stappen"]].map(([id,label])=>(
               <button key={id} onClick={()=>setTab(id)} style={{flex:1,padding:"10px 0",background:"none",border:"none",borderBottom:`2px solid ${tab===id?C.accent:"transparent"}`,fontWeight:tab===id?700:500,fontSize:13,color:tab===id?C.accent:"#888",cursor:"pointer",fontFamily:"inherit"}}>{label}</button>
             ))}
           </div>
-          <div style={{flex:1,overflowY:"auto",padding:"12px 16px"}}>
+          <div style={{flex:1,overflowY:"auto",overflowX:"hidden",padding:"12px 16px",WebkitOverflowScrolling:"touch"}}>
             {tab==="ing" ? (
               recipe.ingredients.map(ing=>(
                 <div key={ing.id} onClick={()=>toggle(ing.id)} style={{display:"flex",alignItems:"center",gap:12,padding:"11px 0",borderBottom:"1px solid #f5f5f5",cursor:"pointer"}}>
@@ -522,9 +522,9 @@
         <div style={{background:"#fff",borderTop:`1px solid ${C.border}`,display:"flex",flexShrink:0,paddingBottom:"env(safe-area-inset-bottom, 20px)"}}>
           {items.map(({id,icon,label})=>(
             <button key={id} onClick={()=>setTab(id)} style={{flex:1,background:"none",border:"none",padding:"10px 0 8px",display:"flex",flexDirection:"column",alignItems:"center",gap:3,cursor:"pointer",color:tab===id?C.accent:"#bbb",fontFamily:"inherit"}}>
-              <span style={{fontSize:20,filter:tab===id?"none":"grayscale(1)"}}>{icon}</span>
-              <span style={{fontSize:10,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.5px"}}>{label}</span>
-              {tab===id&&<div style={{width:16,height:2,borderRadius:1,background:C.accent}}/>}
+              <span style={{fontSize:22,width:28,height:28,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,opacity:tab===id?1:0.4}}>{icon}</span>
+              <span style={{fontSize:10,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.5px",lineHeight:1}}>{label}</span>
+              <div style={{width:16,height:2,borderRadius:1,background:C.accent,opacity:tab===id?1:0,marginTop:1}}/>
             </button>
           ))}
         </div>
@@ -673,7 +673,7 @@
             )}
           </div>
 
-          <div style={{flex:1,overflowY:"auto"}}>
+          <div style={{flex:1,overflowY:"auto",overflowX:"hidden",WebkitOverflowScrolling:"touch"}}>
             {tab==="timer" ? <FreeTimer/> : loading ? (
               <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"80px 24px",gap:16}}>
                 <Spinner size={36}/>
