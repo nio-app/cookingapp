@@ -360,142 +360,246 @@
     }
 
 
+    // ── Voedingswaardetabel (per 100g) ────────────────────────
+    const FOOD_DB = {
+      // Granen & pasta
+      "spaghetti":{cal:371,pro:13,carb:74,fat:1.5,fib:3,sug:2},
+      "pasta":{cal:371,pro:13,carb:74,fat:1.5,fib:3,sug:2},
+      "rijst":{cal:350,pro:7,carb:77,fat:0.6,fib:1,sug:0},
+      "jasmijnrijst":{cal:350,pro:7,carb:77,fat:0.6,fib:1,sug:0},
+      "zuurdesembrood":{cal:233,pro:9,carb:44,fat:1.5,fib:3,sug:2},
+      "brood":{cal:250,pro:9,carb:48,fat:2,fib:3,sug:4},
+      "bloem":{cal:364,pro:10,carb:76,fat:1,fib:3,sug:0},
+      "crackers":{cal:420,pro:9,carb:68,fat:12,fib:4,sug:2},
+      "croutons":{cal:400,pro:11,carb:68,fat:11,fib:3,sug:2},
+      // Vlees & vis
+      "kip":{cal:165,pro:31,carb:0,fat:3.6,fib:0,sug:0},
+      "kippendijen":{cal:177,pro:24,carb:0,fat:9,fib:0,sug:0},
+      "kipfilet":{cal:165,pro:31,carb:0,fat:3.6,fib:0,sug:0},
+      "rund":{cal:250,pro:26,carb:0,fat:17,fib:0,sug:0},
+      "gehakt":{cal:220,pro:20,carb:0,fat:15,fib:0,sug:0},
+      "spek":{cal:540,pro:37,carb:1,fat:42,fib:0,sug:0},
+      "pancetta":{cal:665,pro:25,carb:1,fat:62,fib:0,sug:0},
+      "guanciale":{cal:665,pro:25,carb:1,fat:62,fib:0,sug:0},
+      "zalm":{cal:208,pro:20,carb:0,fat:13,fib:0,sug:0},
+      "tonijn":{cal:130,pro:28,carb:0,fat:1,fib:0,sug:0},
+      "garnalen":{cal:99,pro:18,carb:1,fat:1.4,fib:0,sug:0},
+      // Zuivel & eieren
+      "ei":{cal:155,pro:13,carb:1,fat:11,fib:0,sug:1},
+      "eieren":{cal:155,pro:13,carb:1,fat:11,fib:0,sug:1},
+      "eidooier":{cal:322,pro:16,carb:4,fat:27,fib:0,sug:1},
+      "eidooiers":{cal:322,pro:16,carb:4,fat:27,fib:0,sug:1},
+      "melk":{cal:61,pro:3.2,carb:4.8,fat:3.3,fib:0,sug:5},
+      "roomboter":{cal:717,pro:0.9,carb:0.1,fat:81,fib:0,sug:0},
+      "boter":{cal:717,pro:0.9,carb:0.1,fat:81,fib:0,sug:0},
+      "kaas":{cal:402,pro:25,carb:1,fat:33,fib:0,sug:0},
+      "parmezaan":{cal:431,pro:38,carb:4,fat:29,fib:0,sug:0},
+      "parmezaanse kaas":{cal:431,pro:38,carb:4,fat:29,fib:0,sug:0},
+      "pecorino":{cal:387,pro:32,carb:0,fat:28,fib:0,sug:0},
+      "pecorino romano":{cal:387,pro:32,carb:0,fat:28,fib:0,sug:0},
+      "feta":{cal:264,pro:14,carb:4,fat:21,fib:0,sug:4},
+      "mozzarella":{cal:280,pro:17,carb:2,fat:22,fib:0,sug:1},
+      "creme fraiche":{cal:300,pro:2,carb:3,fat:30,fib:0,sug:3},
+      "yoghurt":{cal:61,pro:3.5,carb:4.7,fat:3.3,fib:0,sug:5},
+      "kokosmelk":{cal:197,pro:2,carb:6,fat:21,fib:0,sug:3},
+      // Groenten
+      "tomaat":{cal:18,pro:0.9,carb:3.9,fat:0.2,fib:1.2,sug:2.6},
+      "tomaten":{cal:18,pro:0.9,carb:3.9,fat:0.2,fib:1.2,sug:2.6},
+      "ui":{cal:40,pro:1.1,carb:9.3,fat:0.1,fib:1.7,sug:4.2},
+      "uien":{cal:40,pro:1.1,carb:9.3,fat:0.1,fib:1.7,sug:4.2},
+      "knoflook":{cal:149,pro:6.4,carb:33,fat:0.5,fib:2.1,sug:1},
+      "paprika":{cal:31,pro:1,carb:6,fat:0.3,fib:2,sug:4},
+      "courgette":{cal:17,pro:1.2,carb:3.1,fat:0.3,fib:1,sug:2},
+      "wortel":{cal:41,pro:0.9,carb:10,fat:0.2,fib:2.8,sug:4.7},
+      "aardappel":{cal:77,pro:2,carb:17,fat:0.1,fib:2.2,sug:0.8},
+      "spinazie":{cal:23,pro:2.9,carb:3.6,fat:0.4,fib:2.2,sug:0.4},
+      "broccoli":{cal:34,pro:2.8,carb:7,fat:0.4,fib:2.6,sug:1.7},
+      "sla":{cal:15,pro:1.4,carb:2.2,fat:0.2,fib:1.3,sug:0.8},
+      "romaine sla":{cal:17,pro:1.2,carb:3.3,fat:0.3,fib:2.1,sug:1.2},
+      "champignons":{cal:22,pro:3.1,carb:3.3,fat:0.3,fib:1,sug:2},
+      "avocado":{cal:160,pro:2,carb:9,fat:15,fib:7,sug:0.7},
+      // Fruit
+      "banaan":{cal:89,pro:1.1,carb:23,fat:0.3,fib:2.6,sug:12},
+      "appel":{cal:52,pro:0.3,carb:14,fat:0.2,fib:2.4,sug:10},
+      "citroen":{cal:29,pro:1.1,carb:9,fat:0.3,fib:2.8,sug:2.5},
+      "sinaasappel":{cal:47,pro:0.9,carb:12,fat:0.1,fib:2.4,sug:9},
+      // Sauzen & condimenten
+      "olijfolie":{cal:884,pro:0,carb:0,fat:100,fib:0,sug:0},
+      "zonnebloemolie":{cal:884,pro:0,carb:0,fat:100,fib:0,sug:0},
+      "sojasaus":{cal:53,pro:8,carb:5,fat:0,fib:0,sug:1},
+      "vissaus":{cal:35,pro:5,carb:4,fat:0,fib:0,sug:3},
+      "ketjap":{cal:51,pro:3,carb:9,fat:0,fib:0,sug:6},
+      "currypasta":{cal:150,pro:4,carb:12,fat:10,fib:3,sug:4},
+      "groene currypasta":{cal:150,pro:4,carb:12,fat:10,fib:3,sug:4},
+      "tomatenpuree":{cal:82,pro:4,carb:19,fat:0.5,fib:4,sug:12},
+      "mayonaise":{cal:680,pro:1,carb:1,fat:75,fib:0,sug:1},
+      "mosterd":{cal:66,pro:4,carb:8,fat:3,fib:3,sug:4},
+      "dijonmosterd":{cal:66,pro:4,carb:8,fat:3,fib:3,sug:4},
+      // Noten & zaden
+      "amandelen":{cal:579,pro:21,carb:22,fat:50,fib:12,sug:4},
+      "walnoten":{cal:654,pro:15,carb:14,fat:65,fib:7,sug:2},
+      "pinda":{cal:567,pro:26,carb:16,fat:49,fib:9,sug:4},
+      "pindakaas":{cal:588,pro:25,carb:20,fat:50,fib:6,sug:9},
+      "sesamzaad":{cal:573,pro:18,carb:23,fat:50,fib:12,sug:0},
+      // Zoetmakers & bakken
+      "suiker":{cal:387,pro:0,carb:100,fat:0,fib:0,sug:100},
+      "poedersuiker":{cal:387,pro:0,carb:100,fat:0,fib:0,sug:100},
+      "honing":{cal:304,pro:0.3,carb:82,fat:0,fib:0,sug:82},
+      "chocolade":{cal:546,pro:5,carb:60,fat:31,fib:7,sug:48},
+      "pure chocolade":{cal:546,pro:5,carb:60,fat:31,fib:7,sug:48},
+      "cacao":{cal:228,pro:20,carb:58,fat:14,fib:33,sug:2},
+      "vanille":{cal:288,pro:0.1,carb:13,fat:0.1,fib:0,sug:13},
+      // Peulvruchten
+      "kikkererwten":{cal:364,pro:19,carb:61,fat:6,fib:17,sug:11},
+      "linzen":{cal:353,pro:25,carb:60,fat:1,fib:11,sug:2},
+      "zwarte bonen":{cal:339,pro:22,carb:63,fat:1,fib:16,sug:2},
+      // Kruiden (verwaarloosbaar maar aanwezig)
+      "peterselie":{cal:36,pro:3,carb:6,fat:0.8,fib:3,sug:0.9},
+      "basilicum":{cal:23,pro:3.2,carb:2.7,fat:0.6,fib:1.6,sug:0.3},
+      "oregano":{cal:265,pro:9,carb:69,fat:4,fib:43,sug:4},
+      "komijn":{cal:375,pro:18,carb:44,fat:22,fib:11,sug:2},
+      "paprikapoeder":{cal:282,pro:14,carb:54,fat:13,fib:35,sug:10},
+      "chilivlokken":{cal:282,pro:12,carb:57,fat:13,fib:28,sug:10},
+      "zout":{cal:0,pro:0,carb:0,fat:0,fib:0,sug:0},
+      "peper":{cal:251,pro:10,carb:64,fat:3,fib:25,sug:0},
+      "zwarte peper":{cal:251,pro:10,carb:64,fat:3,fib:25,sug:0},
+    };
+
+    // Unit conversions to grams
+    const UNIT_TO_GRAM = {
+      "g": 1, "gram": 1,
+      "kg": 1000,
+      "ml": 1, "milliliter": 1,
+      "l": 1000, "liter": 1000,
+      "el": 15, "eetlepel": 15,
+      "tl": 5, "theelepel": 5,
+      "tsp": 5, "tbsp": 15,
+      "cup": 240,
+      "snuf": 1, "snufje": 1,
+      "handvol": 30,
+      "stuk": 100, "stuks": 100,
+      "krop": 200,
+      "": 1,
+    };
+
+    function lookupFood(name) {
+      const lower = name.toLowerCase().trim();
+      // Exact match
+      if (FOOD_DB[lower]) return FOOD_DB[lower];
+      // Partial match - find best match
+      let best = null, bestLen = 0;
+      for (const key of Object.keys(FOOD_DB)) {
+        if (lower.includes(key) || key.includes(lower)) {
+          if (key.length > bestLen) { best = FOOD_DB[key]; bestLen = key.length; }
+        }
+      }
+      return best;
+    }
+
+    function calcNutrition(ingredients) {
+      let total = { calories:0, protein:0, carbs:0, fat:0, fiber:0, sugar:0 };
+      for (const ing of ingredients) {
+        const food = lookupFood(ing.name);
+        if (!food) continue;
+        const unitKey = (ing.unit||"").toLowerCase().trim();
+        const factor = (UNIT_TO_GRAM[unitKey] || 1) * ing.amount / 100;
+        total.calories += food.cal * factor;
+        total.protein  += food.pro * factor;
+        total.carbs    += food.carb * factor;
+        total.fat      += food.fat * factor;
+        total.fiber    += food.fib * factor;
+        total.sugar    += food.sug * factor;
+      }
+      return {
+        calories: Math.round(total.calories),
+        protein:  Math.round(total.protein),
+        carbs:    Math.round(total.carbs),
+        fat:      Math.round(total.fat),
+        fiber:    Math.round(total.fiber),
+        sugar:    Math.round(total.sugar),
+      };
+    }
+
     // ── Nutrition Tab ─────────────────────────────────────────
     function NutritionTab({ recipe, portions }) {
-      const [nutrition, setNutrition] = useState(recipe.nutrition || null);
-      const [loading, setLoading] = useState(false);
-      const [error, setError] = useState("");
       const ratio = portions / recipe.portions;
+      const nutrition = calcNutrition(recipe.ingredients);
 
-      const calculate = async () => {
-        setLoading(true); setError("");
-        const ingredientList = recipe.ingredients
-          .map(i => `${i.amount} ${i.unit} ${i.name}`.trim())
-          .join("\n");
-
-        const prompt = `Bereken de voedingswaarden voor dit recept met ${recipe.portions} porties.
-Ingredienten:
-${ingredientList}
-
-Geef ALLEEN een JSON object terug, geen uitleg, geen markdown:
-{"calories":0,"protein":0,"carbs":0,"fat":0,"fiber":0,"sugar":0}
-Alle waarden zijn per portie in grammen (calories in kcal). Rond af op hele getallen.`;
-
-        try {
-          const res = await fetch("https://api.anthropic.com/v1/messages", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "x-api-key": document.getElementById("nutrition-api-key")?.value || "",
-              "anthropic-version": "2023-06-01",
-              "anthropic-dangerous-direct-browser-access": "true",
-            },
-            body: JSON.stringify({
-              model: "claude-haiku-4-5-20251001",
-              max_tokens: 200,
-              messages: [{ role: "user", content: prompt }],
-            }),
-          });
-          if (!res.ok) {
-            const e = await res.json().catch(()=>({}));
-            throw new Error(e?.error?.message || "API fout "+res.status);
-          }
-          const data = await res.json();
-          const text = data.content?.find(b=>b.type==="text")?.text || "";
-          const start = text.indexOf("{"); const end = text.lastIndexOf("}");
-          if (start===-1) throw new Error("Geen geldig antwoord");
-          const parsed = JSON.parse(text.slice(start, end+1));
-          setNutrition(parsed);
-          // Save to Supabase
-          await supabase.from("recepten").update({ nutrition: parsed }).eq("id", recipe.id);
-          recipe.nutrition = parsed;
-        } catch(e) {
-          setError(e.message);
-        }
-        setLoading(false);
+      const MacroBar = ({label, value, total, color}) => {
+        const pct = total > 0 ? Math.round((value/total)*100) : 0;
+        return (
+          <div style={{marginBottom:14}}>
+            <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}>
+              <span style={{fontSize:13,fontWeight:600,color:"#333"}}>{label}</span>
+              <span style={{fontSize:13,fontWeight:700,color:color}}>{Math.round(value*ratio)}g <span style={{fontSize:11,color:C.textLight,fontWeight:400}}>({pct}%)</span></span>
+            </div>
+            <div style={{height:6,borderRadius:3,background:"#f0f0f0",overflow:"hidden"}}>
+              <div style={{height:"100%",borderRadius:3,background:color,width:`${Math.min(pct,100)}%`,transition:"width 0.5s ease"}}/>
+            </div>
+          </div>
+        );
       };
 
-      const NutrRow = ({icon, label, value, unit, color}) => (
+      const NutrRow = ({icon,label,value,unit,color}) => (
         <div style={{display:"flex",alignItems:"center",gap:10,padding:"10px 0",borderBottom:"1px solid #f5f5f5"}}>
-          <div style={{width:36,height:36,borderRadius:10,background:color+"22",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,flexShrink:0}}>{icon}</div>
-          <span style={{flex:1,fontSize:14,color:"#333",fontWeight:500}}>{label}</span>
-          <span style={{fontSize:15,fontWeight:700,color:color}}>{Math.round((value||0)*ratio)}</span>
-          <span style={{fontSize:12,color:"#aaa",minWidth:20}}>{unit}</span>
+          <div style={{width:34,height:34,borderRadius:9,background:color+"1A",display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,flexShrink:0}}>{icon}</div>
+          <span style={{flex:1,fontSize:14,color:"#333"}}>{label}</span>
+          <span style={{fontSize:15,fontWeight:700,color:color}}>{Math.round(value*ratio)}</span>
+          <span style={{fontSize:12,color:"#aaa",minWidth:24}}>{unit}</span>
         </div>
       );
 
-      if (!nutrition && !loading) return (
-        <div style={{padding:"24px 0",display:"flex",flexDirection:"column",alignItems:"center",gap:16}}>
-          <div style={{fontSize:48}}>🥗</div>
-          <div style={{textAlign:"center"}}>
-            <p style={{fontWeight:700,fontSize:15,color:C.text,margin:"0 0 6px"}}>Voedingswaarden berekenen</p>
-            <p style={{fontSize:13,color:C.textLight,margin:"0 0 16px",lineHeight:1.5}}>Claude berekent calorieën, eiwitten,<br/>koolhydraten en vetten per portie.</p>
-          </div>
-          <div style={{width:"100%",marginBottom:8}}>
-            <label style={{fontSize:12,fontWeight:600,color:C.textMid,display:"block",marginBottom:6}}>🔑 Anthropic API-sleutel</label>
-            <input id="nutrition-api-key" type="password" placeholder="sk-ant-api03-..." style={{width:"100%",padding:"10px 12px",border:`1px solid ${C.borderMid}`,borderRadius:8,fontSize:13,fontFamily:"monospace",outline:"none",background:"#fafafa",boxSizing:"border-box"}}/>
-            <p style={{fontSize:11,color:C.textLight,margin:"4px 0 0"}}>Haal op via console.anthropic.com/settings/keys</p>
-          </div>
-          <button onClick={calculate} style={{padding:"12px 28px",background:C.accent,color:"#fff",border:"none",borderRadius:10,fontWeight:700,fontSize:14,cursor:"pointer",fontFamily:"inherit",boxShadow:`0 4px 14px ${C.accent}44`}}>
-            ✨ Berekenen
-          </button>
-        </div>
-      );
-
-      if (loading) return (
-        <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"60px 0",gap:16}}>
-          <Spinner size={32}/>
-          <p style={{fontSize:14,color:C.textLight}}>Claude berekent voedingswaarden...</p>
-        </div>
-      );
-
-      if (error) return (
-        <div style={{padding:"24px 0",display:"flex",flexDirection:"column",alignItems:"center",gap:12}}>
-          <div style={{fontSize:40}}>⚠️</div>
-          <p style={{fontSize:14,color:C.danger,textAlign:"center"}}>{error}</p>
-          <div style={{width:"100%",marginBottom:8}}>
-            <input id="nutrition-api-key" type="password" placeholder="sk-ant-api03-..." style={{width:"100%",padding:"10px 12px",border:`1px solid ${C.borderMid}`,borderRadius:8,fontSize:13,fontFamily:"monospace",outline:"none",background:"#fafafa",boxSizing:"border-box"}}/>
-          </div>
-          <button onClick={calculate} style={{padding:"10px 24px",background:C.accent,color:"#fff",border:"none",borderRadius:8,fontWeight:700,fontSize:13,cursor:"pointer",fontFamily:"inherit"}}>Opnieuw proberen</button>
-        </div>
-      );
+      const totalMacros = nutrition.protein + nutrition.carbs + nutrition.fat;
 
       return (
         <div>
-          {/* Calorie ring */}
-          <div style={{display:"flex",alignItems:"center",gap:16,padding:"16px 0 20px",borderBottom:`1px solid ${C.border}`,marginBottom:4}}>
-            <div style={{position:"relative",width:80,height:80,flexShrink:0}}>
-              <svg width={80} height={80} style={{transform:"rotate(-90deg)"}}>
-                <circle cx={40} cy={40} r={32} fill="none" stroke="#f0f0f0" strokeWidth={8}/>
-                <circle cx={40} cy={40} r={32} fill="none" stroke={C.accent} strokeWidth={8}
-                  strokeDasharray={`${2*Math.PI*32}`}
-                  strokeDashoffset={`${2*Math.PI*32*0.25}`}
-                  strokeLinecap="round"/>
-              </svg>
-              <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
-                <span style={{fontSize:16,fontWeight:800,color:C.text,lineHeight:1}}>{Math.round((nutrition.calories||0)*ratio)}</span>
-                <span style={{fontSize:9,color:C.textLight,fontWeight:600}}>kcal</span>
+          {/* Calorie card */}
+          <div style={{background:`linear-gradient(135deg, ${C.accent}18, ${C.accent}08)`,borderRadius:16,padding:"16px",marginBottom:16,border:`1px solid ${C.accent}22`}}>
+            <div style={{display:"flex",alignItems:"center",gap:14}}>
+              <div style={{position:"relative",width:72,height:72,flexShrink:0}}>
+                <svg width={72} height={72} style={{transform:"rotate(-90deg)"}}>
+                  <circle cx={36} cy={36} r={28} fill="none" stroke="#e0e0e0" strokeWidth={7}/>
+                  <circle cx={36} cy={36} r={28} fill="none" stroke={C.accent} strokeWidth={7}
+                    strokeDasharray={`${2*Math.PI*28}`}
+                    strokeDashoffset={`${2*Math.PI*28*0.3}`}
+                    strokeLinecap="round"/>
+                </svg>
+                <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
+                  <span style={{fontSize:15,fontWeight:800,color:C.text,lineHeight:1}}>{Math.round(nutrition.calories*ratio)}</span>
+                  <span style={{fontSize:9,color:C.textLight,fontWeight:600,textTransform:"uppercase"}}>kcal</span>
+                </div>
               </div>
-            </div>
-            <div style={{flex:1}}>
-              <p style={{fontWeight:700,fontSize:15,color:C.text,margin:"0 0 2px"}}>Per portie ({portions}x)</p>
-              <p style={{fontSize:12,color:C.textLight,margin:"0 0 8px"}}>Gebaseerd op {recipe.portions} porties recept</p>
-              <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
-                {[["Eiw.",nutrition.protein,"#4CAF50"],["Koolh.",nutrition.carbs,C.accent],["Vet",nutrition.fat,"#FF9800"]].map(([l,v,col])=>(
-                  <div key={l} style={{background:col+"18",borderRadius:6,padding:"3px 8px",fontSize:11,fontWeight:700,color:col}}>{l} {Math.round((v||0)*ratio)}g</div>
-                ))}
+              <div style={{flex:1}}>
+                <p style={{fontWeight:700,fontSize:15,color:C.text,margin:"0 0 2px"}}>Per portie</p>
+                <p style={{fontSize:12,color:C.textLight,margin:"0 0 10px"}}>{portions} van de {recipe.portions} porties</p>
+                <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
+                  {[["E",nutrition.protein,"#4CAF50"],["K",nutrition.carbs,C.accent],["V",nutrition.fat,"#FF9800"]].map(([l,v,col])=>(
+                    <div key={l} style={{background:col+"22",borderRadius:6,padding:"3px 8px",fontSize:11,fontWeight:700,color:col}}>{l} {Math.round(v*ratio)}g</div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
+
+          {/* Macro bars */}
+          <div style={{background:"#fafafa",borderRadius:12,padding:"14px 14px 6px",marginBottom:16,border:`1px solid ${C.border}`}}>
+            <p style={{fontSize:12,fontWeight:700,color:C.textLight,textTransform:"uppercase",letterSpacing:"0.5px",margin:"0 0 12px"}}>Macroverdeling</p>
+            <MacroBar label="Eiwitten" value={nutrition.protein} total={totalMacros} color="#4CAF50"/>
+            <MacroBar label="Koolhydraten" value={nutrition.carbs} total={totalMacros} color={C.accent}/>
+            <MacroBar label="Vetten" value={nutrition.fat} total={totalMacros} color="#FF9800"/>
+          </div>
+
+          {/* Detail rows */}
           <NutrRow icon="🔥" label="Calorieën" value={nutrition.calories} unit="kcal" color="#FF5722"/>
           <NutrRow icon="💪" label="Eiwitten" value={nutrition.protein} unit="g" color="#4CAF50"/>
           <NutrRow icon="🌾" label="Koolhydraten" value={nutrition.carbs} unit="g" color={C.accent}/>
           <NutrRow icon="🫒" label="Vetten" value={nutrition.fat} unit="g" color="#FF9800"/>
           <NutrRow icon="🌿" label="Vezels" value={nutrition.fiber} unit="g" color="#8BC34A"/>
           <NutrRow icon="🍬" label="Suikers" value={nutrition.sugar} unit="g" color="#E91E63"/>
-          <button onClick={()=>{setNutrition(null); recipe.nutrition=null;}} style={{marginTop:16,width:"100%",padding:"10px",background:"transparent",border:`1px solid ${C.borderMid}`,borderRadius:8,color:C.textLight,fontSize:12,cursor:"pointer",fontFamily:"inherit"}}>
-            ↺ Opnieuw berekenen
-          </button>
+
+          <p style={{fontSize:11,color:C.textLight,margin:"16px 0 0",textAlign:"center",lineHeight:1.5}}>
+            * Geschatte waarden op basis van ingrediënten.<br/>Werkelijke waarden kunnen afwijken.
+          </p>
           <div style={{height:20}}/>
         </div>
       );
